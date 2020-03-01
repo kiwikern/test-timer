@@ -3,6 +3,8 @@ import { TouchControl } from './TouchControl';
 
 import './TestTimer.css';
 import { ProgressCounter } from './ProgressCounter';
+import { IconButton } from '@material-ui/core';
+import { VolumeOff, VolumeUp } from '@material-ui/icons';
 
 type Props = {
   testDurationSeconds: number,
@@ -12,6 +14,7 @@ type State = {
   remainingTestSeconds: number,
   remainingTaskSeconds: number,
   numberOfOpenTasks: number,
+  playSounds: boolean,
 };
 
 export class TestTimer extends React.Component<Props, State> {
@@ -19,6 +22,7 @@ export class TestTimer extends React.Component<Props, State> {
     remainingTestSeconds: this.props.testDurationSeconds,
     remainingTaskSeconds: Math.floor(this.props.testDurationSeconds / this.props.numberOfTasks),
     numberOfOpenTasks: this.props.numberOfTasks,
+    playSounds: true,
   };
   currentIntervalId: NodeJS.Timer | null = null;
 
@@ -31,21 +35,31 @@ export class TestTimer extends React.Component<Props, State> {
   }
 
   render() {
+    const soundButton = this.state.playSounds ? <VolumeUp/> : <VolumeOff/>;
+
     return <div className="test-timer">
+
       <ProgressCounter remaining={this.state.remainingTestSeconds} total={this.props.testDurationSeconds}>
         Total Duration
       </ProgressCounter>
+
       <div className="row">
         <ProgressCounter remaining={this.state.numberOfOpenTasks} total={this.props.numberOfTasks}
                          showPlainCount={true}>
           Active Task
         </ProgressCounter>
+
         <ProgressCounter remaining={this.state.remainingTaskSeconds}
                          total={this.state.remainingTestSeconds / this.state.numberOfOpenTasks}>
           Task Duration
         </ProgressCounter>
       </div>
+
       <TouchControl onBack={() => this.previousTask()} onNext={() => this.nextTask()}/>
+
+      <IconButton onClick={() => this.toggleSound()}>
+        {soundButton}
+      </IconButton>
     </div>;
   }
 
@@ -54,6 +68,10 @@ export class TestTimer extends React.Component<Props, State> {
       remainingTestSeconds: state.remainingTestSeconds - 1,
       remainingTaskSeconds: state.remainingTaskSeconds - 1,
     }));
+
+    if (this.state.remainingTaskSeconds === 0 && this.state.playSounds) {
+      new Audio('./hint.wav').play();
+    }
 
     if (this.state.remainingTestSeconds === 0) {
       this.stop();
@@ -71,7 +89,7 @@ export class TestTimer extends React.Component<Props, State> {
     if (this.state.numberOfOpenTasks >= 1) {
       this.setState(state => ({
         numberOfOpenTasks: state.numberOfOpenTasks - 1,
-        remainingTaskSeconds: state.remainingTestSeconds / (state.numberOfOpenTasks - 1)
+        remainingTaskSeconds: Math.floor(state.remainingTestSeconds / (state.numberOfOpenTasks - 1))
       }));
     }
 
@@ -91,5 +109,11 @@ export class TestTimer extends React.Component<Props, State> {
     if (!this.currentIntervalId) {
       this.componentDidMount();
     }
+  }
+
+  private toggleSound() {
+    this.setState(state => ({
+      playSounds: !state.playSounds,
+    }));
   }
 }
