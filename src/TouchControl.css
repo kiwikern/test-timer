@@ -1,0 +1,16 @@
+.touch-control {
+    display: flex;
+    flex-direction: row;
+    height: 35vh;
+    width: 100%;
+}
+
+.previous {
+    flex: 1 1 auto;
+    background-color: red;
+}
+
+.next {
+    flex: 0 1 70%;
+    background-color: green
+}

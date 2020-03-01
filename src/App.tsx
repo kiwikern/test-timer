@@ -1,11 +1,13 @@
 import React from 'react';
 import './App.css';
-import { Timer } from './Timer';
+import { TestTimer } from './TestTimer';
 
-function App() {
-  return (
-    <Timer startSeconds={5} />
-  );
+export class App extends React.Component<{}, {}> {
+  render(): React.ReactElement {
+
+    return (
+      <TestTimer numberOfTasks={18} testDurationSeconds={15 * 60} />
+    );
+  }
+
 }
-
-export default App;
