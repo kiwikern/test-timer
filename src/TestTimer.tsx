@@ -1,8 +1,8 @@
 import React from 'react';
-import { Timer } from './Timer';
 import { TouchControl } from './TouchControl';
 
 import './TestTimer.css';
+import { ProgressCounter } from './ProgressCounter';
 
 type Props = {
   testDurationSeconds: number,
@@ -32,9 +32,19 @@ export class TestTimer extends React.Component<Props, State> {
 
   render() {
     return <div className="test-timer">
-      <span>Open Tasks: {this.state.numberOfOpenTasks}</span>
-      <span>Test: <Timer currentSeconds={this.state.remainingTestSeconds}/></span>
-      <span>Test: <Timer currentSeconds={this.state.remainingTaskSeconds}/></span>
+      <ProgressCounter remaining={this.state.remainingTestSeconds} total={this.props.testDurationSeconds}>
+        Total Duration
+      </ProgressCounter>
+      <div className="row">
+        <ProgressCounter remaining={this.state.numberOfOpenTasks} total={this.props.numberOfTasks}
+                         showPlainCount={true}>
+          Active Task
+        </ProgressCounter>
+        <ProgressCounter remaining={this.state.remainingTaskSeconds}
+                         total={this.state.remainingTestSeconds / this.state.numberOfOpenTasks}>
+          Task Duration
+        </ProgressCounter>
+      </div>
       <TouchControl onBack={() => this.previousTask()} onNext={() => this.nextTask()}/>
     </div>;
   }
@@ -53,17 +63,20 @@ export class TestTimer extends React.Component<Props, State> {
   private stop() {
     if (this.currentIntervalId) {
       clearInterval(this.currentIntervalId);
+      this.currentIntervalId = null;
     }
   }
 
   private nextTask() {
-    if (this.state.numberOfOpenTasks <= 1) {
-
-    } else {
+    if (this.state.numberOfOpenTasks >= 1) {
       this.setState(state => ({
         numberOfOpenTasks: state.numberOfOpenTasks - 1,
         remainingTaskSeconds: state.remainingTestSeconds / (state.numberOfOpenTasks - 1)
       }));
+    }
+
+    if (this.state.numberOfOpenTasks <= 1) {
+      this.stop();
     }
   }
 
@@ -74,5 +87,9 @@ export class TestTimer extends React.Component<Props, State> {
     this.setState(state => ({
       remainingTaskSeconds: state.remainingTestSeconds / state.numberOfOpenTasks,
     }));
+
+    if (!this.currentIntervalId) {
+      this.componentDidMount();
+    }
   }
 }

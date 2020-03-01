@@ -1,0 +1,29 @@
+.progress-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 10px;
+}
+
+.progress-count {
+    top: 0;
+    position: absolute;
+    z-index: 5;
+}
+
+.progress-background {
+    top: 0;
+    position: absolute;
+    color: lightgray !important;
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100px;
+}

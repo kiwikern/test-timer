@@ -6,11 +6,13 @@
 }
 
 .previous {
+    margin: 8px;
+    font-size: 24px;
     flex: 1 1 auto;
-    background-color: red;
 }
 
 .next {
+    margin: 8px;
+    font-size: 24px;
     flex: 0 1 70%;
-    background-color: green
 }
